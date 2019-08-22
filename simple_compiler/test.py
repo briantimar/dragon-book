@@ -29,6 +29,18 @@ class TestLexer(unittest.TestCase):
         ts = TokenStream(source)
         with self.assertRaises(SyntaxError):
             ts.get_all_lexemes()
+        
+    def test_get_token(self):
+        from lexer import TokenStream
+        source = "23+4-2"
+        lexes = ["23", "+", "4", "-", "2"]
+        vals = [23, None, 4, None, 2]
+        ts = TokenStream(source)
+        toks = ts.get_all_tokens()
+        for i in range(len(toks)):
+            self.assertEqual(toks[i].lex, lexes[i])
+            if vals[i] is not None:
+                self.assertEqual(toks[i].val, vals[i])
 
 
 if __name__ == "__main__":

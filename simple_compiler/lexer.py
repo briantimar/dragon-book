@@ -21,6 +21,18 @@ def iswhitespace(char):
         return True
     return False
 
+class Token:
+    pass
+
+class Op(Token):
+    def __init__(self, lex):
+        self.lex = lex
+
+class Num(Token):
+    def __init__(self, lex):
+        self.lex = lex
+        self.val = int(lex)
+
 class TokenStream:
     """Given source input string, provides tokens on demand."""
 
@@ -52,28 +64,50 @@ class TokenStream:
             Returns empty string when source is exhausted.
         """
         chars = ''
+        typ = None
+
         if self.is_empty():
-            return chars
+            return chars, typ
         while True:
             try:
                 char = self.getchar()
                 if iswhitespace(char):
                     continue
                 elif isop(char):
-                    return char
+                    typ = 'op'
+                    return char, typ
                 elif isdigit(char):
+                    typ = 'num'
                     chars += char
                     while isdigit(self.peek_char()):
                         chars += self.getchar()
-                    return chars
+                    return chars, typ
                 else:
                     raise SyntaxError(f"Unexpected character: {char}")
 
             except EOFError:
-                return ''
+                return '', typ
+
+    def get_token(self):
+        """Returns next token, or None if source is exhausted."""
+        lex, typ = self.get_lexeme()
+        if typ == 'op':
+            return Op(lex)
+        elif typ == 'num':
+            return Num(lex)
+        elif typ is None:
+            return None
+        else:
+            raise ValueError(f"Invalid token type {typ}")
 
     def get_all_lexemes(self):
         ls = []
         while not self.is_empty():
-            ls.append(self.get_lexeme())
+            ls.append(self.get_lexeme()[0])
         return ls
+
+    def get_all_tokens(self):
+        toks = []
+        while not self.is_empty():
+            toks.append(self.get_token())
+        return toks
