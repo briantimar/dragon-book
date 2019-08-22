@@ -43,5 +43,21 @@ class TestLexer(unittest.TestCase):
                 self.assertEqual(toks[i].val, vals[i])
 
 
+class TestParser(unittest.TestCase):
+
+    def test_translate(self):
+        from lexer import TokenStream
+        from parser import PredictiveParser
+        source = "9 + 5"
+        ts = TokenStream(source)
+        pp = PredictiveParser()
+        pp.translate(ts)
+        self.assertEqual(pp.output_buffer, "(9)(5)+")
+
+        source = "42-3+3"
+        ts = TokenStream(source)
+        pp.translate(ts)
+        self.assertEqual(pp.output_buffer, "(42)(3)-(3)+")
+
 if __name__ == "__main__":
     unittest.main()

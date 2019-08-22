@@ -33,6 +33,11 @@ class Num(Token):
         self.lex = lex
         self.val = int(lex)
 
+def isNum(token):
+    return isinstance(token, Num)
+def isOp(token):
+    return isinstance(token, Op)
+
 class TokenStream:
     """Given source input string, provides tokens on demand."""
 
